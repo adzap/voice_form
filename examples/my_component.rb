@@ -35,7 +35,7 @@ class MyComponent
       
       invalid do
         if @postcode.size < 4
-          call_context.speak "Your postcode must 4 digist."
+          call_context.speak "Your postcode must 4 digits."
         else
           call_context.speak "Your postcode cannot start with a 0."
         end
