@@ -2,7 +2,7 @@
 
 A plugin for Adhearsion to add form functionality and flow, similar to VoiceXML style forms.
 
-By Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)
+By Adam Meehan (adam.meehan@gmail.com, {http://duckpunching.com/}[http://duckpunching.com/])
 
 
 ==Introduction
@@ -25,6 +25,7 @@ Steps are:
 * Put this plugin in a folder called 'voice_form'
 * At the bottom of your startup.rb file put these lines
 
+--
 
   $LOAD_PATH.unshift AHN_ROOT + '/vendor/voice_form/lib'
   require 'voice_form'
@@ -150,6 +151,6 @@ TODO: More docs
 
 ==Credits
 
-Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/[http://duckpunching.com/])
+Adam Meehan (adam.meehan@gmail.com, {http://duckpunching.com/}[http://duckpunching.com/])
 
-Also thanks to Jay Phillips for his brilliant work on Adhearsion (http://adhearsion.com[http://adhearsion.com]).
+Also thanks to Jay Phillips for his brilliant work on Adhearsion ({http://adhearsion.com}[http://adhearsion.com]).
