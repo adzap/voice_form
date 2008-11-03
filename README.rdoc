@@ -25,10 +25,10 @@ Steps are:
 * Put this plugin in a folder called 'voice_form'
 * At the bottom of your startup.rb file put these lines
 
-<tt>
+
   $LOAD_PATH.unshift AHN_ROOT + '/vendor/voice_form/lib'
   require 'voice_form'
-</tt>
+
 
 ==Example
 
@@ -96,7 +96,7 @@ For a more complete example see the examples folder.
 
 The flow of the form works like a stack. So each field and do_block are executed in order until the 
 end of the form is reached. You can jump around the stack by using <tt>form.goto :field_name</tt> which
-will move the _stack pointer_ to the field after the current field is completed and move forward
+will move the <em>stack pointer</em> to the field after the current field is completed and move forward
 through the form stack from that point, regardless whether a field has already been completed.
 
 You can also use <tt>form.restart</tt> to start the form over from the beginning.
@@ -105,7 +105,7 @@ The form setup block is only run once and is not executed again, even with a <tt
 
 The +voice_form+ method takes only one option
 
-  :call_context - to nominate the call context method if other than call context
+* :call_context - to nominate the call context method if other than call context
                                   
 
 === field
@@ -150,6 +150,6 @@ TODO: More docs
 
 ==Credits
 
-Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/)
+Adam Meehan (adam.meehan@gmail.com, http://duckpunching.com/[http://duckpunching.com/])
 
-Also thanks to Jay Phillips for his brilliant work on Adhearsion (http://adhearsion.com).
+Also thanks to Jay Phillips for his brilliant work on Adhearsion (http://adhearsion.com[http://adhearsion.com]).
