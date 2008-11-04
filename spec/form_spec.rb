@@ -112,7 +112,7 @@ describe VoiceForm::Form do
     start_voice_form
   end
 
-  it "should restart form repeat all form stack items" do
+  it "should restart form and repeat all form stack items" do
     first_call_me    = i_should_be_called(2)
     do_block_call_me = i_should_be_called(2)
     second_call_me   = i_should_be_called(2)
@@ -133,6 +133,27 @@ describe VoiceForm::Form do
           form.restart
         end
       }
+    end
+    
+    start_voice_form
+  end
+  
+  it "should exit form and not run subsequent fields" do
+    first_call_me    = i_should_be_called
+    do_block_call_me = i_should_not_be_called
+    second_call_me   = i_should_not_be_called
+    
+    form.field(:first_field, :attempts => 1) do
+      prompt :speak => 'enter value'
+      setup   { first_call_me.call }
+      failure { form.exit }
+    end
+    
+    form.do_block { do_block_call_me.call }
+
+    form.field(:second_field) do
+      prompt :speak => 'enter value'
+      setup { second_call_me.call }
     end
     
     start_voice_form

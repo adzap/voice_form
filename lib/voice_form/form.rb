@@ -63,7 +63,7 @@ module VoiceForm
       @stack_index = -1
     end
     
-    def exit_form
+    def exit
       @exit_form = true
     end
     
