@@ -30,14 +30,13 @@ module VoiceForm
         break if @exit_form
         
         slot = form_stack[@stack_index]
+        @stack_index += 1
         
         if slot.is_a?(Proc)
           @component.instance_eval(&slot)
         else
           slot[1].run(@component)
         end
-        
-        @stack_index += 1
       end
       @stack_index = 0
     end
@@ -56,11 +55,11 @@ module VoiceForm
         index = i and break if slot.is_a?(Array) && slot[0] == name
       }
       raise "goto failed: No form field found with name '#{name}'." unless index
-      @stack_index = index - 1
+      @stack_index = index
     end
     
     def restart
-      @stack_index = -1
+      @stack_index = 0
     end
     
     def exit
