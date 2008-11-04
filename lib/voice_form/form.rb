@@ -75,7 +75,7 @@ module VoiceForm
     def add_field_accessors
       form_stack.each do |(name, field)|
         next if name.is_a?(Proc)
-        @component.class_eval do
+        @component.class.class_eval do
           attr_accessor name
         end
       end

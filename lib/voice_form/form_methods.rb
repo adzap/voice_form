@@ -46,7 +46,7 @@ module VoiceForm
       if self.class == VoiceForm::Form
         self.form_stack << [field_name, form_field]
       else
-        self.class_eval do
+        self.class.class_eval do
           attr_accessor field_name
         end
         form_field.run
