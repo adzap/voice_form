@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe VoiceForm::Form do
   include VoiceForm
 
-  attr_accessor :call_context, :my_field
+  attr_accessor :call_context
   
   before do
     new_voice_form
@@ -11,10 +11,18 @@ describe VoiceForm::Form do
     @call_context.stub!(:input).with(any_args).and_return('')
   end
 
+  it "should define form and run it" do
+    call_me = i_should_be_called
+   
+    self.class.voice_form &call_me
+   
+    start_voice_form
+  end
+
   it "should call setup block" do
     form.setup &i_should_be_called
     
-    start_voice_form
+    run_form
   end
   
   it "should run single form field" do
@@ -25,7 +33,7 @@ describe VoiceForm::Form do
       setup { call_me.call }
     end
     
-    start_voice_form
+    run_form
   end
   
   it "should run all form fields" do
@@ -41,7 +49,7 @@ describe VoiceForm::Form do
       setup { second_call_me.call }
     end
     
-    start_voice_form
+    run_form
   end
   
   it "should run do_blocks" do
@@ -49,7 +57,7 @@ describe VoiceForm::Form do
 
     form.do_block { do_block_call_me.call }
     
-    start_voice_form
+    run_form
   end
   
   it "should run all fields and do_blocks" do
@@ -62,7 +70,7 @@ describe VoiceForm::Form do
     end
     form.do_block { do_block_call_me.call }
     
-    start_voice_form
+    run_form
   end
   
   it "should jump forward in form stack to field in goto" do
@@ -83,7 +91,7 @@ describe VoiceForm::Form do
       setup { second_call_me.call }
     end
     
-    start_voice_form
+    run_form
   end
   
   it "should jump back in form stack to goto field and repeat form stack items" do
@@ -109,7 +117,7 @@ describe VoiceForm::Form do
       }
     end
     
-    start_voice_form
+    run_form
   end
 
   it "should restart form and repeat all form stack items" do
@@ -135,7 +143,7 @@ describe VoiceForm::Form do
       }
     end
     
-    start_voice_form
+    run_form
   end
   
   it "should exit form and not run subsequent fields" do
@@ -156,10 +164,16 @@ describe VoiceForm::Form do
       setup { second_call_me.call }
     end
     
-    start_voice_form
+    run_form
   end
 
   def new_voice_form
     self.class.voice_form { }
+    self.form = VoiceForm::Form.new(self.class.voice_form_options[0])
+    self.form.instance_eval(&self.class.voice_form_options[1])
+  end
+  
+  def run_form
+    form.run(self)
   end
 end

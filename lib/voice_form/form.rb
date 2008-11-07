@@ -16,13 +16,13 @@ module VoiceForm
       @component = component
       
       # hack to avoid setting the call_context in each field for different context name
-      if context_name = @options[:call_context]
+      if context_name = @options[:call_context] && !@component.respond_to?(:call_context)
         @component.class_eval do
           alias_method :call_context, context_name
         end
       end
       
-      add_field_accessors    
+      add_field_accessors
       
       run_setup
       
@@ -73,12 +73,16 @@ module VoiceForm
     end
     
     def add_field_accessors
+      return if @accessors_added
+      
       form_stack.each do |(name, field)|
         next if name.is_a?(Proc)
         @component.class.class_eval do
           attr_accessor name
         end
       end
+      
+      @accessors_added = true
     end
   end
   
