@@ -1,7 +1,7 @@
 module VoiceForm
 
   class FormField
-    attr_accessor :call_context, :options, :prompts
+    attr_accessor :prompts
     
     def initialize(field, options, component)
       @field, @options, @component = field, options, component
@@ -50,7 +50,7 @@ module VoiceForm
       
       run_callback(:setup)
       
-      result = 1.upto(options[:attempts]) do |attempt|
+      result = 1.upto(@options[:attempts]) do |attempt|
         if get_input(attempt).empty?
           run_callback(:timeout)
           next
@@ -85,7 +85,7 @@ module VoiceForm
     end
     
     def get_input(attempt)
-      input_options = options.dup
+      input_options = @options.dup
       input_options.merge!(prompt_for_attempt(attempt))
       args = [ input_options ]
       length = input_options.delete(:length) || input_options.delete(:max_length)
@@ -118,11 +118,11 @@ module VoiceForm
     end
     
     def minimum_length
-      options[:min_length] || options[:length] || 1
+      @options[:min_length] || @options[:length] || 1
     end
     
     def maximum_length
-      options[:max_length] || options[:length] || @value.size
+      @options[:max_length] || @options[:length] || @value.size
     end
     
     def call_context
