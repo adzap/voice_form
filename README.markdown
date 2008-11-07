@@ -2,7 +2,7 @@
 
 A plugin for Adhearsion to add form functionality and flow, similar to VoiceXML style forms.
 
-By Adam Meehan (adam.meehan@gmail.com, {http://duckpunching.com/}[http://duckpunching.com/])
+By Adam Meehan (adam.meehan@gmail.com, [http://duckpunching.com/](http://duckpunching.com/))
 
 Released under the MIT license.
 
