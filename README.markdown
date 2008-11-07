@@ -26,7 +26,7 @@ Steps are:
 - Put this plugin in a folder called 'voice_form'
 - At the bottom of your startup.rb file put these lines
 
-****
+----------------
 
     $LOAD_PATH.unshift AHN_ROOT + '/vendor/voice_form/lib'
     require 'voice_form'
