@@ -9,7 +9,7 @@ Released under the MIT license.
 ##Introduction
 
 After developing VoiceXML (VXML) apps for quite a while and then trying Adhearsion, I found I missed 
-the form element work flow when writing components. Given that most interactions with an IVR system
+the VXML form element flow when writing components. Given that most interactions with an IVR system
 are simply prompt, input, validate and, reprompt or go the next field. This flow has been nicely 
 distilled into the VXML form element and its child elements. The problem with VXML is that you are 
 using XML in a programmatic way, yuck! Also you are not using Ruby, so you miss out on its awesomeness.
@@ -25,6 +25,8 @@ Steps are:
 - Make directory call 'vendor' in the root of your project 
 - Put this plugin in a folder called 'voice_form'
 - At the bottom of your startup.rb file put these lines
+
+****
 
     $LOAD_PATH.unshift AHN_ROOT + '/vendor/voice_form/lib'
     require 'voice_form'
