@@ -1,10 +1,11 @@
 module VoiceForm
 
   class FormField
+    attr_reader :name
     attr_accessor :prompts
     
-    def initialize(field, options, component)
-      @field, @options, @component = field, options, component
+    def initialize(name, options, component)
+      @name, @options, @component = name, options, component
       @options.reverse_merge!(:attempts => 5, :call_context => 'call_context')
       @callbacks = {}
       @prompts = []
@@ -44,7 +45,7 @@ module VoiceForm
     end
         
     def run(component=nil)
-      @component = component unless component.nil?
+      @component = component if component
             
       set_component_value('')
       
@@ -102,7 +103,7 @@ module VoiceForm
     def run_callback(callback)
       if block = @callbacks[callback]
         result = @component.instance_eval(&block)
-        @value = component_value
+        @value = get_component_value
         result
       else
         true
@@ -110,11 +111,11 @@ module VoiceForm
     end
    
     def set_component_value(value)
-      @component.send("#{@field}=", @value)
+      @component.send("#{@name}=", @value)
     end
     
-    def component_value
-      @component.send("#{@field}")
+    def get_component_value
+      @component.send("#{@name}")
     end
     
     def minimum_length
