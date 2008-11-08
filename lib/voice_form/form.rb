@@ -16,33 +16,13 @@ module VoiceForm
     def run(component)
       @component = component
       
-      # hack to avoid setting the call_context in each field for different context name
-      if context_name = @options[:call_context] && !@component.respond_to?(:call_context)
-        @component.class_eval do
-          alias_method :call_context, context_name
-        end
-      end
+      alias_call_context
       
       add_field_accessors
       
       run_setup
       
-      while @stack_index < form_stack.size do
-        break if @exit_form
-        
-        slot = form_stack[@stack_index]
-        @stack_index += 1
-        
-        if form_field?(slot)
-          @current_field = slot.name
-          slot.run(@component)
-        else
-          @current_field = nil
-          @component.instance_eval(&slot)
-        end
-      end
-      @stack_index = 0
-      @current_field = nil
+      run_form_stack
     end
     
     def setup(&block)
@@ -76,6 +56,25 @@ module VoiceForm
       @component.instance_eval(&@setup) if @setup
     end
     
+    def run_form_stack
+      while @stack_index < form_stack.size do
+        slot = form_stack[@stack_index]
+        @stack_index += 1
+        
+        if form_field?(slot)
+          @current_field = slot.name
+          slot.run(@component)
+        else
+          @current_field = nil
+          @component.instance_eval(&slot)
+        end
+        
+        break if @exit_form
+      end
+      @stack_index = 0
+      @current_field = nil
+    end
+    
     def add_field_accessors
       return if @accessors_added
       
@@ -92,6 +91,16 @@ module VoiceForm
     def form_field?(slot)
       slot.is_a?(VoiceForm::FormField)
     end
+    
+    def alias_call_context
+      # hack to avoid setting the call_context in each field for different context name
+      if context_name = @options[:call_context] && !@component.respond_to?(:call_context)
+        @component.class_eval do
+          alias_method :call_context, context_name
+        end
+      end
+    end
+    
   end
   
 end
