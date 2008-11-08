@@ -12,12 +12,12 @@ module VoiceForm
     end
     
     def prompt(options)
-      add_prompts(options)
+      add_prompts(options.reverse_merge(:timeout => 5))
     end
     
     def reprompt(options)
       raise 'A reprompt can only be used after a prompt' if @prompts.empty?
-      add_prompts(options)
+      add_prompts(options.reverse_merge(:timeout => 5))
     end
   
     def setup(&block)
@@ -82,7 +82,7 @@ module VoiceForm
       key = prompt.has_key?(:play) ? :play : :speak
       message = prompt[key]
       message = @component.instance_eval(&message) if message.is_a?(Proc)
-      prompt.merge( key => message, :timeout => 5)
+      prompt.merge(key => message)
     end
     
     def get_input(attempt)
