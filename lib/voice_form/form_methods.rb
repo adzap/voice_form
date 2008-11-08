@@ -43,7 +43,7 @@ module VoiceForm
       raise 'At least one prompt is required' if form_field.prompts.empty?
       
       if self.class == VoiceForm::Form
-        self.form_stack << [field_name, form_field]
+        self.form_stack << form_field
       else
         unless self.respond_to?(field_name)
           self.class.class_eval do

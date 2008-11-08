@@ -166,6 +166,40 @@ describe VoiceForm::Form do
     
     run_form
   end
+  
+  describe "current_field" do
+    before do
+      @field = nil
+    end
+    
+    it "should be field name when field is run" do
+      form.field(:my_field) do
+        prompt :speak => 'enter value'
+        setup { @field = form.current_field }
+      end
+      run_form
+      
+      @field.should == :my_field
+    end
+    
+    it "should be nil in do_block" do
+      form.do_block do
+        @field = form.current_field
+      end
+      run_form
+      
+      @field.should be_nil
+    end
+    
+    it "should be nil after form is run" do
+      form.field(:my_field) do
+        prompt :speak => 'enter value'
+      end
+      run_form
+      
+      form.current_field.should be_nil
+    end
+  end
 
   def new_voice_form
     self.class.voice_form { }
