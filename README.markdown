@@ -19,18 +19,11 @@ The plugin attempts to emulate some of the VXML form flow for use in your Adhear
 
 ##Install
 
-As Adhearsion doesn't have a plugin architecture that I know of, you have to do a little bit of setup.
+    sudo gem install adzap-voice_form --source=http://gems.github.com/
+    
+At the bottom your projects startup.rb file put
 
-Steps are:
-- Make directory call 'vendor' in the root of your project 
-- Put this plugin in a folder called 'voice_form'
-- At the bottom of your startup.rb file put these lines
-
-----------------
-
-    $LOAD_PATH.unshift AHN_ROOT + '/vendor/voice_form/lib'
     require 'voice_form'
-
 
 ##Example
 
