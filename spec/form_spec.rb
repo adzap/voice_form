@@ -172,7 +172,7 @@ describe VoiceForm::Form do
       @field = nil
     end
     
-    it "should be field name when field is run" do
+    it "should be name of current field being run" do
       form.field(:my_field) do
         prompt :speak => 'enter value'
         setup { @field = form.current_field }

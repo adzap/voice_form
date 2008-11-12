@@ -131,18 +131,18 @@ describe VoiceForm::FormField do
     item.run
   end
 
-  describe "confirm callback" do
-
-    it "should run if defined" do
-      call_me = i_should_be_called
-      item = form_field(:my_field, :length => 3, :attempts => 1) do
-        prompt :speak => "first"
-        confirm { call_me.call; [] }
-      end
-      call_context.stub!(:input).and_return('123')
-
-      item.run
+  it "should run confirm callback if defined" do
+    call_me = i_should_be_called
+    item = form_field(:my_field, :length => 3, :attempts => 1) do
+      prompt :speak => "first"
+      confirm { call_me.call; [] }
     end
+    call_context.stub!(:input).and_return('123')
+
+    item.run
+  end
+
+  describe "confirm callback" do
 
     it "should not run if not valid input" do
       dont_call_me = i_should_not_be_called
