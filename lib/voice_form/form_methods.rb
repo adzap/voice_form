@@ -3,14 +3,27 @@ module VoiceForm
   def self.included(base)
     base.extend MacroMethods
     base.class_eval do
-      include InstanceMethods
       include FormMethods
-  
-      cattr_accessor :voice_form_options
-      attr_accessor :form
-    end  
+    end
   end
   
+  module MacroMethods
+    
+    def voice_form(options={}, &block)
+      raise "Voice form requires block" unless block_given?
+
+      self.class_eval do
+        include InstanceMethods
+    
+        cattr_accessor :voice_form_options
+        attr_accessor :form
+      end
+
+      self.voice_form_options = [options, block]
+    end
+    
+  end
+
   module InstanceMethods
   
     def start_voice_form
@@ -21,21 +34,12 @@ module VoiceForm
     end
 
   end
-  
-  module MacroMethods
-    
-    def voice_form(options={}, &block)
-      raise "Voice form requires block" unless block_given?
-      self.voice_form_options = [options, block]
-    end
-    
-  end
-  
+
   module FormMethods
     
     # Can be used in a form or stand-alone in a component method
     def field(field_name, options={}, &block)
-      raise unless block_given?
+      raise 'Field require a block' unless block_given?
       
       form_field = VoiceForm::FormField.new(field_name, options, self)
       

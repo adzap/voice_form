@@ -5,7 +5,9 @@ require 'rubygems'
 require 'spec'
 require 'active_support'
 
-require 'voice_form'
+require 'voice_form/form_methods'
+require 'voice_form/form'
+require 'voice_form/form_field'
 
 module SpecHelpers
   def i_should_be_called(times=1, &block)
