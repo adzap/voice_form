@@ -32,7 +32,6 @@ and is currently disabled in Adhearsion. In your own application you can just us
 command to play your sound files.
 
     class MyComponent
-      include VoiceForm
       add_call_context :as => :call_context
 
       voice_form do      
@@ -51,6 +50,10 @@ command to play your sound files.
                   
           validate do
             @age.to_i <= @max_age
+          end
+          
+          confirm(:accept => 1, :reject => 2, :timeout => 3, :attempts => 3) do
+            "You entered #{@age}. Press 1 to continue or 2 to try again."
           end
           
           invalid do
@@ -82,10 +85,13 @@ away.
 You don't have to start the form from the dialplan, but it makes it simple. You could start it from 
 within a component method.
 
-All blocks (setup, validate, do_block etc.) are evaluated in the component scope so you can use 
-component methods and instance variables in them and they will work.
+All callback blocks (setup, validate, timeout etc.) are evaluated in the component scope so you can use 
+component methods and instance variables in them and they will work. You don't have to define any 
+callbacks if the field is straight forward and only depends on its length.
 
 For a more complete example see the examples folder.
+
+## Commands
 
 ### voice_form
 
@@ -137,8 +143,72 @@ There can only be one `prompt` but you can have multiple `reprompt`s. When you a
 what the prompt is if there is input the first time or the input is invalid.
 
 
-TODO: Add specific info for callback and option.
+### Callbacks 
 
+The available callbacks that can be defined for a field are as follows
+
+- setup
+- timeout
+- validate
+- invalid
+- confirm
+- success
+- failure
+
+Each of them takes a block which is executed as a specific point in the process of getting form input.
+All of them are optional. The block for a callback is evaluated in the scope of the component so any
+instance variables and component methods are available to use including the call context.
+
+The details of each callback are as follows
+
+### setup
+
+This is run once only for a field if defined before any prompts
+
+### timeout
+
+This is run if no input is received.
+
+### validate
+
+This is run after input of a valid length. The validate block is where you put validation logic of the
+value just input by the user. The block should return `true` if the value is valid or `false` otherwise.
+If the validate callback returns false then the invalid callback will be called next.
+
+### invalid
+
+The invalid callback is called if the input value is not of a valid length or the validate block returns
+false.
+
+### confirm
+
+The confirm callback is called after the input has been validated. The confirm callback is a little different
+from the others. Idea is that you return either an array or string of the audio files or TTS text, respectively,
+you want to play as the prompt for confirming the value entered. The confirm block also takes a few options:
+
+- :accept   - the number to press to accept the field value entered. Default is 1. 
+- :reject   - the number to press the reject the field value entered and try again. Default is 2.
+- :attempts - the number of attempts to try to get a confirmation response. Default is 3
+- :timeout  - the number of seconds to wait for input after the confirmatio response. Default is 3.
+
+The value returned from the block should form the complete list of audio files or TTS text to prompt the user
+including the values to accept of reject the value.
+
+For example, in a field called my_field:
+
+    confirm(:accept => 1, :reject => 2, :attempts => 3) do
+      ['you-entered', @my_field.scan(/\d/), 'is-this-correct', 'press-1-accept-2-try-again'].flatten
+    end
+
+The above will `play` the array of audo files as the prompt for confirmation. 
+   
+    confirm(:accept => 1, :reject => 2, :attempts => 3) do
+      "You entered #{@my_field}. Is this correct? Press 1 to accept or 2 try again."
+    end
+
+The above will `speak` the string as the prompt for confirmation. 
+
+If no valid input is entered for the confirmation 
 
 TODO: More docs
 
