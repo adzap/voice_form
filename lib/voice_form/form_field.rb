@@ -4,11 +4,12 @@ module VoiceForm
     attr_reader :name
     attr_accessor :prompts
 
-    def initialize(name, options, component)
+    def initialize(name, options, component, &block)
       @name, @options, @component = name, options, component
       @options.reverse_merge!(:attempts => 5, :call_context => 'call_context')
       @callbacks = {}
       @prompts = []
+      self.instance_eval(&block)
     end
 
     def prompt(options)
