@@ -6,11 +6,12 @@ module VoiceForm
     attr_accessor :form_stack
     attr_reader :current_field
     
-    def initialize(options={})
+    def initialize(options={}, &block)
       @options = options
       
       @form_stack = []
       @stack_index = 0
+      self.instance_eval(&block)
     end
     
     def run(component)

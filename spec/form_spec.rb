@@ -203,8 +203,8 @@ describe VoiceForm::Form do
 
   def new_voice_form
     self.class.voice_form { }
-    self.form = VoiceForm::Form.new(self.class.voice_form_options[0])
-    self.form.instance_eval(&self.class.voice_form_options[1])
+    options, block = *self.class.voice_form_options
+    self.form = VoiceForm::Form.new(options, &block)
   end
   
   def run_form
