@@ -189,7 +189,7 @@ you want to play as the prompt for confirming the value entered. The confirm blo
 - :accept   - the number to press to accept the field value entered. Default is 1. 
 - :reject   - the number to press the reject the field value entered and try again. Default is 2.
 - :attempts - the number of attempts to try to get a confirmation response. Default is 3
-- :timeout  - the number of seconds to wait for input after the confirmatio response. Default is 3.
+- :timeout  - the number of seconds to wait for input after the confirmation response. Default is 3.
 
 The value returned from the block should form the complete list of audio files or TTS text to prompt the user
 including the values to accept of reject the value.
