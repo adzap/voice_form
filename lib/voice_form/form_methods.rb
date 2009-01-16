@@ -16,7 +16,7 @@ module VoiceForm
         include InstanceMethods
     
         cattr_accessor :voice_form_options
-        attr_accessor :form
+        attr_accessor :form, :call_context
       end
 
       self.voice_form_options = [options, block]
@@ -26,9 +26,10 @@ module VoiceForm
 
   module InstanceMethods
   
-    def start_voice_form
+    def start_voice_form(call)
       raise "No voice form defined" unless self.voice_form_options
       options, block = *self.class.voice_form_options
+      @call_context = call
       self.form = VoiceForm::Form.new(options, &block)
       self.form.run(self)
     end
