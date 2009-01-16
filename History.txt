@@ -1,3 +1,6 @@
+== 0.2.0 2009-01-16
+* Updated to work with Adhearsion 0.8.0 release. Examples updated to match new usage.
+
 == 0.1.1 2008-11-12
 * refactored to auto include voice_form method in components, no more 'include VoiceForm'
 

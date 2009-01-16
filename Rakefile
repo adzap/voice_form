@@ -5,11 +5,11 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "voice_form"
-GEM_VERSION = "0.1.0"
+GEM_VERSION = "0.2.0"
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/voice_form"
-SUMMARY = "A DSL for Adhearsion to create forms in the style of the VoiceXML form element."
+SUMMARY = "A plugin for Adhearsion to create forms in the style of the VoiceXML form element."
 
 spec = Gem::Specification.new do |s|
   s.name = GEM
