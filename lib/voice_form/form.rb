@@ -16,7 +16,6 @@ module VoiceForm
     def run(component)
       @component = component
       
-      alias_call_context
       add_field_accessors
       run_setup
       run_form_stack
@@ -87,15 +86,6 @@ module VoiceForm
     
     def form_field?(slot)
       slot.is_a?(VoiceForm::FormField)
-    end
-    
-    def alias_call_context
-      # hack to avoid setting the call_context in each field for different context name
-      if context_name = @options[:call_context] && !@component.respond_to?(:call_context)
-        @component.class_eval do
-          alias_method :call_context, context_name
-        end
-      end
     end
     
   end
