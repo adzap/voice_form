@@ -16,7 +16,7 @@ describe VoiceForm::Form do
    
     self.class.voice_form &call_me
    
-    start_voice_form
+    start_voice_form(@call_context)
   end
 
   it "should call setup block" do
