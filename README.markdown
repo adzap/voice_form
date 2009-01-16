@@ -1,4 +1,4 @@
-#VoiceForm
+# VoiceForm
 
 A plugin for Adhearsion to add form functionality and flow, similar to VoiceXML style forms.
 
@@ -6,7 +6,7 @@ By Adam Meehan (adam.meehan@gmail.com, [http://duckpunching.com/](http://duckpun
 
 Released under the MIT license.
 
-##Introduction
+## Introduction
 
 After developing VoiceXML (VXML) apps for quite a while and then trying Adhearsion, I found I missed 
 the VXML form element flow when writing components. Given that most interactions with an IVR system
@@ -17,7 +17,7 @@ using XML in a programmatic way, yuck! Also you are not using Ruby, so you miss 
 The plugin attempts to emulate some of the VXML form flow for use in your Adhearsion components.
 
 
-##Install
+## Install
 
     sudo gem install adzap-voice_form --source=http://gems.github.com/
     
@@ -25,7 +25,7 @@ At the bottom your projects startup.rb file put
 
     require 'voice_form'
 
-##Example
+## Example
 
 I use the **speak** command in this example to give better context. The speak command is for TTS 
 and is currently disabled in Adhearsion. In your own application you can just use the **play**
@@ -37,6 +37,9 @@ command to play your sound files.
       MIN_AGE = 18
 
       voice_form do      
+        setup do
+          # Do stuff here before the form is run
+        end
       
         field(:age, :max_length => 3, :attempts => 3) do
           prompt :speak => "Please enter your age", :timeout => 2
@@ -171,26 +174,26 @@ instance variables and component methods are available to use including the call
 
 The details of each callback are as follows
 
-### setup
+#### setup
 
 This is run once only for a field if defined before any prompts
 
-### timeout
+#### timeout
 
 This is run if no input is received.
 
-### validate
+#### validate
 
 This is run after input of a valid length. The validate block is where you put validation logic of the
 value just input by the user. The block should return `true` if the value is valid or `false` otherwise.
 If the validate callback returns false then the invalid callback will be called next.
 
-### invalid
+#### invalid
 
 The invalid callback is called if the input value is not of a valid length or the validate block returns
 false.
 
-### confirm
+#### confirm
 
 The confirm callback is called after the input has been validated. The confirm callback is a little different
 from the others. Idea is that you return either an array or string of the audio files or TTS text, respectively,
@@ -218,12 +221,43 @@ The above will `play` the array of audio files as the prompt for confirmation.
 
 The above will `speak` the string as the prompt for confirmation. 
 
-If no valid input is entered for the confirmation 
-
-TODO: More docs
+If no valid input is entered for the confirmation then another you will be reprompted to enter the field value. 
 
 
-##Credits
+### Form methods
+
+Inside a callback you have the `form` method available. The returns the instance of the current form. The form
+has some methods to allow you to perform form actions which manipulate the form stack. These actions are as follows:
+
+#### form.goto
+
+Inside any callback you can use the `goto` command to designate which field the form should run after the
+current field. Normally the form will progress through the fields in the order defined, but a goto with shift
+the current form position to the field name pass to it like so:
+
+    failure do
+      form.goto :other_field_name
+    end
+
+The form continues from the field in the goto run each subsequent field in order. If the goto field is above the
+current field then the current field will be executed again when it is reached in the stack. If the goto field
+is below the current field then form will continue there, skipping whatever fields may lie between the current
+and the goto field.
+
+
+#### form.restart
+
+The form may be restarted from the start at any point with `form.restart`. This will go back to the top of the
+form and proceed through each field again. The form setup will not be run again however.
+
+
+#### form.exit
+
+To exit the form after the current field is complet just execute `form.exit`. The application will then be 
+returned to where the form was started, be it a dialplan or another form.
+
+
+## Credits
 
 Adam Meehan (adam.meehan@gmail.com, [http://duckpunching.com/](http://duckpunching.com/))
 
