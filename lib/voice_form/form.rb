@@ -43,7 +43,7 @@ module VoiceForm
     end
     
     def exit
-      @exit_form = true
+      @exit = true
     end
     
     private 
@@ -53,7 +53,7 @@ module VoiceForm
     end
     
     def run_form_stack
-      while @stack_index < form_stack.size do
+      while @stack_index < form_stack.size && !@exit do
         slot = form_stack[@stack_index]
         @stack_index += 1
         
@@ -64,8 +64,6 @@ module VoiceForm
           @current_field = nil
           @component.instance_eval(&slot)
         end
-        
-        break if @exit_form
       end
       @stack_index = 0
       @current_field = nil
