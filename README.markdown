@@ -74,6 +74,15 @@ command to play your sound files.
 
 In your dialplan:
 
+For Adhearsion 0.7.999
+
+    general {
+      my_component = new_my_component
+      my_component.start_voice_form(self)
+    }
+
+For Adhearsion 0.8.0
+
     general {
       MyComponent.new.start_voice_form(self)
     }
@@ -199,7 +208,7 @@ For example, in a field called my_field:
       ['you-entered', @my_field.scan(/\d/), 'is-this-correct', 'press-1-accept-2-try-again'].flatten
     end
 
-The above will `play` the array of audo files as the prompt for confirmation. 
+The above will `play` the array of audio files as the prompt for confirmation. 
    
     confirm(:accept => 1, :reject => 2, :attempts => 3) do
       "You entered #{@my_field}. Is this correct? Press 1 to accept or 2 try again."
