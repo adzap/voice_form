@@ -39,11 +39,11 @@ module VoiceForm
     
     # Can be used in a form or stand-alone in a component method
     def field(field_name, options={}, &block)
-      raise 'Field require a block' unless block_given?
+      raise "A field requires a block" unless block_given?
       
       form_field = VoiceForm::FormField.new(field_name, options, self, &block)
       
-      raise 'At least one prompt is required' if form_field.prompts.empty?
+      raise 'A field requires a prompt to be defined' if form_field.prompts.empty?
       
       if self.class == VoiceForm::Form
         self.form_stack << form_field
