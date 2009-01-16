@@ -32,7 +32,7 @@ and is currently disabled in Adhearsion. In your own application you can just us
 command to play your sound files.
 
     class MyComponent
-      add_call_context :as => :call_context
+      include VoiceForm
 
       voice_form do      
       
@@ -75,8 +75,7 @@ command to play your sound files.
 In your dialplan:
 
     general {
-      my_component = new_my_component
-      my_component.start_voice_form
+      MyComponent.new.start_voice_form(self)
     }
 
 That covers most of the functionality, and hopefully it makes sense pretty much straight 
