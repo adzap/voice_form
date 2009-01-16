@@ -34,6 +34,8 @@ command to play your sound files.
     class MyComponent
       include VoiceForm
 
+      MIN_AGE = 18
+
       voice_form do      
       
         field(:age, :max_length => 3, :attempts => 3) do
@@ -41,7 +43,7 @@ command to play your sound files.
           reprompt :speak => "Enter your age in years", :timeout => 2
           
           setup do
-            @max_age = 110
+            # Do stuff here before the field is run
           end
           
           timeout do
@@ -49,7 +51,7 @@ command to play your sound files.
           end
                   
           validate do
-            @age.to_i <= @max_age
+            @age.to_i >= MIN_AGE
           end
           
           confirm(:accept => 1, :reject => 2, :timeout => 3, :attempts => 3) do
@@ -57,7 +59,7 @@ command to play your sound files.
           end
           
           invalid do
-            call_context.speak "Your age must be less than #{@max_age}. Try again."
+            call_context.speak "You must be at least #{MIN_AGE} to play. Try again."
           end
           
           success do
@@ -65,7 +67,7 @@ command to play your sound files.
           end
           
           failure do
-            call_context.speak "You could not enter your age. Thats a bad sign."
+            call_context.speak "You could not enter your age. Thats a bad sign. You might be too old."
           end      
         end
        
