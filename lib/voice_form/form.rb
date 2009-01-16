@@ -8,7 +8,6 @@ module VoiceForm
     
     def initialize(options={}, &block)
       @options = options
-      
       @form_stack = []
       @stack_index = 0
       self.instance_eval(&block)
@@ -18,11 +17,8 @@ module VoiceForm
       @component = component
       
       alias_call_context
-      
       add_field_accessors
-      
       run_setup
-      
       run_form_stack
     end
     
