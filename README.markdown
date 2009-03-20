@@ -50,7 +50,7 @@ command to play your sound files.
           end
           
           timeout do
-            call_context.speak "You did not enter anything. Try again."
+            call.speak "You did not enter anything. Try again."
           end
                   
           validate do
@@ -62,15 +62,15 @@ command to play your sound files.
           end
           
           invalid do
-            call_context.speak "You must be at least #{MIN_AGE} to play. Try again."
+            call.speak "You must be at least #{MIN_AGE} to play. Try again."
           end
           
           success do
-            call_context.speak "You are #{@age} years old."
+            call.speak "You are #{@age} years old."
           end
           
           failure do
-            call_context.speak "You could not enter your age. Thats a bad sign. You might be too old."
+            call.speak "You could not enter your age. Thats a bad sign. You might be too old."
           end      
         end
        
@@ -117,10 +117,6 @@ You can also use `form.restart` to start the form over from the beginning.
 
 The form setup block is only run once and is not executed again, even with a `form.restart`.
 
-The `voice_form` method takes only one option
-
-- :call_context - to nominate the call context method if other than call context
-                                  
 
 ### field
 
@@ -133,7 +129,7 @@ The options available are:
 - :min_length   - minimum number of digits to accept
 - :max_length   - maximum number of digits to accept
 - :attempts     - number of tries to get a valid input
-- :call_context - the method name for the call context if other than 'call_context'
+- :call         - the method name for the call context if other than 'call'. Used for standalone fields not is a form.
 
 All fields defined get an accessor method defined of the same name in the component class.
 This means you can access its value using the instance variable or the accessor method inside any of

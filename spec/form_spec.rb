@@ -3,12 +3,12 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe VoiceForm::Form do
   include VoiceForm
 
-  attr_accessor :call_context
+  attr_accessor :call
   
   before do
     new_voice_form
-    @call_context = mock('CallContext', :play => nil, :speak => nil)
-    @call_context.stub!(:input).with(any_args).and_return('')
+    @call = mock('CallContext', :play => nil, :speak => nil)
+    @call.stub!(:input).with(any_args).and_return('')
   end
 
   it "should define form and run it" do
@@ -16,7 +16,7 @@ describe VoiceForm::Form do
    
     self.class.voice_form &call_me
    
-    start_voice_form(@call_context)
+    start_voice_form(@call)
   end
 
   it "should call setup block" do

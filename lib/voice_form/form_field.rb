@@ -6,7 +6,7 @@ module VoiceForm
 
     def initialize(name, options, component, &block)
       @name, @options, @component = name, options, component
-      @options.reverse_merge!(:attempts => 5, :call_context => 'call_context')
+      @options.reverse_merge!(:attempts => 5, :call => 'call')
       @callbacks = {}
       @prompts = []
       self.instance_eval(&block)
@@ -104,7 +104,7 @@ module VoiceForm
       args = [ input_options ]
       length = input_options.delete(:length) || input_options.delete(:max_length)
       args.unshift(length) if length
-      @value = call_context.input(*args)
+      @value = call.input(*args)
     end
 
     def input_valid?
@@ -126,7 +126,7 @@ module VoiceForm
         prompt.merge!(options.slice(:timeout))
       end
       1.upto(options[:attempts]) do |attempt|
-        value = call_context.input(1, prompt)
+        value = call.input(1, prompt)
         case value
         when options[:accept].to_s
           return true
@@ -165,8 +165,8 @@ module VoiceForm
       @options[:max_length] || @options[:length] || @value.size
     end
 
-    def call_context
-      @call_context ||= @component.send(@options[:call_context])
+    def call
+      @call ||= @component.send(@options[:call])
     end
 
     def add_prompts(options)
