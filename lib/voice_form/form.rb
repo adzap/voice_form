@@ -30,10 +30,7 @@ module VoiceForm
     end
     
     def goto(name)
-      index = nil
-      form_stack.each_with_index {|slot, i| 
-        index = i and break if form_field?(slot) && slot.name == name
-      }
+      index = field_index(name)
       raise "goto failed: No form field found with name '#{name}'." unless index
       @stack_index = index
     end
@@ -71,11 +68,10 @@ module VoiceForm
     
     def add_field_accessors
       return if @accessors_added
-      
-      form_stack.each do |field|
-        next unless form_field?(field)
+
+      fields.keys.each do |field_name|
         @component.class.class_eval do
-          attr_accessor field.name
+          attr_accessor field_name
         end
       end
       
@@ -85,7 +81,19 @@ module VoiceForm
     def form_field?(slot)
       slot.is_a?(VoiceForm::FormField)
     end
-    
+
+    def fields
+      @fields ||= form_stack.inject({}) do |flds,s|
+        flds[s.name] = s if form_field?(s)
+        flds
+      end
+    end
+
+    def field_index(field)
+      form_stack.each_with_index {|slot, i|
+        return i if form_field?(slot) && slot.name == field.to_sym
+      }
+    end
   end
   
 end
