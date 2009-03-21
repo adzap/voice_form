@@ -25,9 +25,9 @@ module VoiceForm
   end
 
   module InstanceMethods
-  
+
     def start_voice_form(call)
-      raise "No voice form defined" unless self.voice_form_options
+      raise "No voice form defined" unless self.class.voice_form_options
       options, block = *self.class.voice_form_options
       @call = call
       self.form = VoiceForm::Form.new(options, &block)
@@ -46,7 +46,7 @@ module VoiceForm
       
       raise 'A field requires a prompt to be defined' if form_field.prompts.empty?
       
-      if self.class == VoiceForm::Form
+      if self.is_a?(VoiceForm::Form)
         self.form_stack << form_field
       else
         unless self.respond_to?(field_name)
