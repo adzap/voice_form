@@ -1,7 +1,10 @@
 module VoiceForm
 
   class FormField
+    cattr_accessor :default_prompt_options
     attr_reader :name
+
+    self.default_prompt_options = { :bargein => true, :timeout => 5 }
 
     def initialize(name, options, component, &block)
       @name, @options, @component = name, options, component
@@ -14,12 +17,12 @@ module VoiceForm
     end
 
     def prompt(options)
-      add_prompt(options.reverse_merge(:bargein => true, :timeout => 5))
+      add_prompt(options.reverse_merge(self.class.default_prompt_options))
     end
 
     def reprompt(options)
       raise 'A reprompt can only be used after a prompt' if @prompt_queue.empty?
-      add_prompt(options.reverse_merge(:bargein => true, :timeout => 5))
+      add_prompt(options.reverse_merge(self.class.default_prompt_options))
     end
 
     def setup(&block)
@@ -48,28 +51,29 @@ module VoiceForm
 
     def confirm(options={}, &block)
       options.reverse_merge!(
-        :attempts => 3,
-        :accept   => 1,
-        :reject   => 2,
-        :timeout  => 3
+        self.class.default_prompt_options.merge(
+          :attempts => 3,
+          :accept   => 1,
+          :reject   => 2
+        )
       )
-      @confirmation_options = options.merge(:block => block)
+      @confirmation_options = options.merge(:message => block)
     end
 
     def run(component=nil)
       @component = component if component
 
-      set_component_value('')
-
       run_callback(:setup)
 
       result = 1.upto(@options[:attempts]) do |attempt|
-        if get_input(attempt).empty?
+        prompt = prompt_for_attempt(attempt)
+
+        @value = get_input(prompt)
+
+        unless valid_length?
           run_callback(:timeout)
           next
         end
-
-        set_component_value @value
 
         if input_valid?
           if value_confirmed?
@@ -90,39 +94,43 @@ module VoiceForm
 
     private
 
-    def get_input(attempt)
-      input_options = @options.dup
-      input_options.merge!(prompt_for_attempt(attempt))
-      args = [ input_options ]
-      length = input_options.delete(:length) || input_options.delete(:max_length)
-      args.unshift(length) if length
-      @value = call.input(*args)
+    def get_input(prompt)
+      method  = prompt[:method]
+      message = prompt[:message]
+
+      if prompt[:bargein]
+        prompt[method] = message
+      else
+        call.send(method, message)
+      end
+
+      args = [ prompt.slice(method, :timeout, :accept_key) ]
+      args.unshift(prompt[:length]) if prompt[:length]
+      call.input(*args)
     end
 
     def input_valid?
-      @value.size >= minimum_length &&
-        @value.size <= maximum_length &&
-        run_callback(:validate)
+      run_callback(:validate)
+    end
+
+    def valid_length?
+      !@value.empty? &&
+        @value.size >= minimum_length &&
+        @value.size <= maximum_length
     end
 
     def value_confirmed?
       return true unless @confirmation_options
-      options = @confirmation_options.dup
 
-      if block = options.delete(:block)
-        message = @component.instance_eval(&block)
-        prompt = case message
-        when Array:  {:play  => message}
-        when String: {:speak => message}
-        end
-        prompt.merge!(options.slice(:timeout))
-      end
-      1.upto(options[:attempts]) do |attempt|
-        value = call.input(1, prompt)
-        case value
-        when options[:accept].to_s
+      prompt = evaluate_prompt(@confirmation_options)
+      prompt[:method] = prompt[:message].is_a?(Array) ? :play : :speak
+      prompt[:length] = [ prompt[:accept].to_s.size, prompt[:reject].to_s.size ].max
+
+      1.upto(prompt[:attempts]) do |attempt|
+        case get_input(prompt)
+        when prompt[:accept].to_s
           return true
-        when options[:reject].to_s
+        when prompt[:reject].to_s
           return false
         else
           next
@@ -132,6 +140,7 @@ module VoiceForm
     end
 
     def run_callback(callback)
+      set_component_value @value
       if block = @callbacks[callback]
         result = @component.instance_eval(&block)
         @value = get_component_value
@@ -162,6 +171,11 @@ module VoiceForm
     end
 
     def add_prompt(options)
+      method  = options.has_key?(:play) ? :play : :speak
+      options[:message] = options.delete(method)
+      options[:method]  = method
+      options[:length]  = @options[:length] || @options[:max_length]
+
       repeats = options[:repeats] || 1
       @prompt_queue += ([options] * repeats)
     end
@@ -176,10 +190,20 @@ module VoiceForm
     end
 
     def evaluate_prompt(prompt)
-      key = prompt.has_key?(:play) ? :play : :speak
-      message = prompt[key]
-      message = @component.instance_eval(&message) if message.is_a?(Proc)
-      prompt.merge(key => message)
+      options = prompt.dup
+      message = options[:message]
+
+      message = case message
+      when String, Array
+        message
+      when Symbol
+        @component.send(message)
+      when Proc
+        @component.instance_eval(&message)
+      end
+     
+      options[:message] = message
+      options
     end
   end
 
