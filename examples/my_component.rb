@@ -1,7 +1,7 @@
 class MyComponent
   include VoiceForm
 
-  delegate :play, :speak, :to => :call_context
+  delegate :play, :speak, :to => :call
 
   voice_form do      
     field(:age, :max_length => 3, :attempts => 3) do
