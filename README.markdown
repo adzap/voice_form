@@ -125,11 +125,11 @@ in a `voice_form` or on its own inside a component method.
 
 The options available are:
 
-- :length       - the number of digits to accept
-- :min_length   - minimum number of digits to accept
-- :max_length   - maximum number of digits to accept
-- :attempts     - number of tries to get a valid input
-- :call         - the method name for the call context if other than 'call'. Used for standalone fields not is a form.
+- :length     - the number of digits to accept
+- :min_length - minimum number of digits to accept
+- :max_length - maximum number of digits to accept
+- :attempts   - number of tries to get a valid input
+- :call       - the method name for the call context if other than 'call'. Used for standalone fields not is a form.
 
 All fields defined get an accessor method defined of the same name in the component class.
 This means you can access its value using the instance variable or the accessor method inside any of
@@ -141,8 +141,9 @@ hash of options to control the prompt such as:
 
 - :play    - play one or more sound files
 - :speak   - play TTS text (needs my Adhearsion hack for speak in input command)
-- :timeout - number of seconds to wait for input
+- :timeout - number of seconds to wait for input. Default is 5.
 - :repeats - number of attempts to use this prompt until the next one is used
+- :bargein - whether to allow caller to interrupt prompt. Default is true.
 
 The length expected for the input is taken from the options passed to the `field` method.
 
