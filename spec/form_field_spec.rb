@@ -18,9 +18,9 @@ describe VoiceForm::FormField do
   end
 
   it "should raise error if no prompts defined" do
-    item = form_field(:my_field) do
-    end
-    lambda { item.run }.should raise_error
+    lambda {
+      form_field(:my_field) {}
+    }.should raise_error
   end
 
   it "should raise error if reprompt defined before prompt" do

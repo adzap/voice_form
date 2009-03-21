@@ -2,23 +2,24 @@ module VoiceForm
 
   class FormField
     attr_reader :name
-    attr_accessor :prompts
 
     def initialize(name, options, component, &block)
       @name, @options, @component = name, options, component
       @options.reverse_merge!(:attempts => 5, :call => 'call')
       @callbacks = {}
-      @prompts = []
-      self.instance_eval(&block)
+      @prompt_queue = []
+
+      instance_eval(&block)
+      raise 'A field requires a prompt to be defined' if @prompt_queue.empty?
     end
 
     def prompt(options)
-      add_prompts(options.reverse_merge(:timeout => 5))
+      add_prompt(options.reverse_merge(:bargein => true, :timeout => 5))
     end
 
     def reprompt(options)
-      raise 'A reprompt can only be used after a prompt' if @prompts.empty?
-      add_prompts(options.reverse_merge(:timeout => 5))
+      raise 'A reprompt can only be used after a prompt' if @prompt_queue.empty?
+      add_prompt(options.reverse_merge(:bargein => true, :timeout => 5))
     end
 
     def setup(&block)
@@ -89,15 +90,6 @@ module VoiceForm
 
     private
 
-    def prompt_for_attempt(attempt)
-      prompt = if attempt == 1 || @prompts.size == 1 then
-        @prompts.first
-      else
-        @prompts[attempt-1] || @prompts.last
-      end
-      evaluate_prompt(prompt)
-    end
-
     def get_input(attempt)
       input_options = @options.dup
       input_options.merge!(prompt_for_attempt(attempt))
@@ -154,7 +146,7 @@ module VoiceForm
     end
 
     def get_component_value
-      @component.send("#{@name}")
+      @component.send(@name)
     end
 
     def minimum_length
@@ -169,9 +161,18 @@ module VoiceForm
       @call ||= @component.send(@options[:call])
     end
 
-    def add_prompts(options)
+    def add_prompt(options)
       repeats = options[:repeats] || 1
-      @prompts += ([options] * repeats)
+      @prompt_queue += ([options] * repeats)
+    end
+
+    def prompt_for_attempt(attempt)
+      prompt = if attempt == 1 || @prompt_queue.size == 1 then
+        @prompt_queue.first
+      else
+        @prompt_queue[attempt-1] || @prompt_queue.last
+      end
+      evaluate_prompt(prompt)
     end
 
     def evaluate_prompt(prompt)

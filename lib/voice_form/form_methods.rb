@@ -44,8 +44,6 @@ module VoiceForm
       
       form_field = VoiceForm::FormField.new(field_name, options, self, &block)
       
-      raise 'A field requires a prompt to be defined' if form_field.prompts.empty?
-      
       if self.is_a?(VoiceForm::Form)
         self.form_stack << form_field
       else
