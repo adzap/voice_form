@@ -1,13 +1,13 @@
 module VoiceForm
  
   def self.included(base)
-    base.extend MacroMethods
+    base.extend ClassMethods
     base.class_eval do
       include FormMethods
     end
   end
   
-  module MacroMethods
+  module ClassMethods
     
     def voice_form(options={}, &block)
       raise "Voice form requires block" unless block_given?
@@ -20,6 +20,15 @@ module VoiceForm
       end
 
       self.voice_form_options = [options, block]
+    end
+
+    def start_voice_form(call)
+      raise "No voice form defined" unless voice_form_options
+      options, block = *voice_form_options
+      component = self.new
+      component.call = call
+      component.form = VoiceForm::Form.new(options, &block)
+      component.form.run(component)
     end
     
   end
