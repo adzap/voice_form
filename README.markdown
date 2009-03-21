@@ -176,7 +176,8 @@ This is run once only for a field if defined before any prompts
 
 #### timeout
 
-This is run if no input is received.
+This is run if no input is recevied or input is not of a valid length as defined by length or min_length
+field options.
 
 #### validate
 
@@ -186,8 +187,7 @@ If the validate callback returns false then the invalid callback will be called 
 
 #### invalid
 
-The invalid callback is called if the input value is not of a valid length or the validate block returns
-false.
+The invalid callback is called if validate block returns false.
 
 #### confirm
 
