@@ -24,11 +24,7 @@ module VoiceForm
 
     def start_voice_form(call)
       raise "No voice form defined" unless voice_form_options
-      options, block = *voice_form_options
-      component = self.new
-      component.call = call
-      component.form = VoiceForm::Form.new(options, &block)
-      component.form.run(component)
+      self.new.start_voice_form(call)
     end
     
   end
