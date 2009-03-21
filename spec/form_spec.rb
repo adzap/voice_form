@@ -6,33 +6,38 @@ describe VoiceForm::Form do
   attr_accessor :call
   
   before do
-    new_voice_form
     @call = mock('CallContext', :play => nil, :speak => nil)
     @call.stub!(:input).with(any_args).and_return('')
   end
 
   it "should define form and run it" do
     call_me = i_should_be_called
-   
-    self.class.voice_form &call_me
-   
+    voice_form do
+      field(:my_field) { prompt :play => nil }
+      setup { call_me.call }
+    end
     start_voice_form(@call)
   end
 
   it "should call setup block" do
-    form.setup &i_should_be_called
-    
+    call_me = i_should_be_called
+    voice_form do
+      setup { call_me.call }
+      field(:my_field) { prompt :play => nil }
+    end
     run_form
   end
   
   it "should run single form field" do
     call_me = i_should_be_called
     
-    form.field(:my_field) do
-      prompt :speak => 'enter value'
-      setup { call_me.call }
+    voice_form do
+      field(:my_field) do
+        prompt :play => nil
+        setup { call_me.call }
+      end
     end
-    
+
     run_form
   end
   
@@ -40,14 +45,16 @@ describe VoiceForm::Form do
     first_call_me = i_should_be_called
     second_call_me = i_should_be_called
     
-    form.field(:first_field) do
-      prompt :speak => 'enter value'
-      setup { first_call_me.call }
-    end
-    form.field(:second_field) do
-      prompt :speak => 'enter value'
-      setup { second_call_me.call }
-    end
+    voice_form do
+      field(:first_field) do
+        prompt :play => nil
+        setup { first_call_me.call }
+      end
+      field(:second_field) do
+        prompt :play => nil
+        setup { second_call_me.call }
+      end
+   end
     
     run_form
   end
@@ -55,7 +62,10 @@ describe VoiceForm::Form do
   it "should run do_blocks" do
     do_block_call_me = i_should_be_called
 
-    form.do_block { do_block_call_me.call }
+    voice_form do
+      do_block { do_block_call_me.call }
+      field(:my_field) { prompt :play => nil }
+    end
     
     run_form
   end
@@ -64,11 +74,13 @@ describe VoiceForm::Form do
     field_call_me = i_should_be_called
     do_block_call_me = i_should_be_called
     
-    form.field(:first_field) do
-      prompt :speak => 'enter value'
-      setup { field_call_me.call }
+    voice_form do
+      field(:first_field) do
+        prompt :play => nil
+        setup { field_call_me.call }
+      end
+      do_block { do_block_call_me.call }
     end
-    form.do_block { do_block_call_me.call }
     
     run_form
   end
@@ -78,17 +90,19 @@ describe VoiceForm::Form do
     do_block_call_me = i_should_not_be_called
     second_call_me   = i_should_be_called
     
-    form.field(:first_field, :attempts => 1) do
-      prompt :speak => 'enter value'
-      setup { first_call_me.call }
-      failure { form.goto :second_field }
-    end
-    
-    form.do_block { do_block_call_me.call }
+    voice_form do
+      field(:first_field, :attempts => 1) do
+        prompt :play => nil
+        setup { first_call_me.call }
+        failure { form.goto :second_field }
+      end
+      
+      do_block { do_block_call_me.call }
 
-    form.field(:second_field) do
-      prompt :speak => 'enter value'
-      setup { second_call_me.call }
+      field(:second_field) do
+        prompt :play => nil
+        setup { second_call_me.call }
+      end
     end
     
     run_form
@@ -99,22 +113,24 @@ describe VoiceForm::Form do
     do_block_call_me = i_should_be_called(2)
     second_call_me   = i_should_be_called(2)
     
-    form.field(:first_field, :attempts => 1) do
-      prompt :speak => 'enter value'
-      setup { first_call_me.call }
-    end
+    voice_form do
+      field(:first_field, :attempts => 1) do
+        prompt :play => nil
+        setup { first_call_me.call }
+      end
     
-    form.do_block { do_block_call_me.call }
+      do_block { do_block_call_me.call }
 
-    form.field(:second_field) do
-      prompt :speak => 'enter value'
-      setup { second_call_me.call }
-      failure { 
-        unless @once
-          @once = true
-          form.goto :first_field 
-        end
-      }
+      field(:second_field) do
+        prompt :play => nil
+        setup { second_call_me.call }
+        failure {
+          unless @once
+            @once = true
+            form.goto :first_field
+          end
+        }
+      end
     end
     
     run_form
@@ -125,22 +141,24 @@ describe VoiceForm::Form do
     do_block_call_me = i_should_be_called(2)
     second_call_me   = i_should_be_called(2)
     
-    form.field(:first_field, :attempts => 1) do
-      prompt :speak => 'enter value'
-      setup { first_call_me.call }
-    end
-    
-    form.do_block { do_block_call_me.call }
+    voice_form do
+      field(:first_field, :attempts => 1) do
+        prompt :play => nil
+        setup { first_call_me.call }
+      end
+      
+      do_block { do_block_call_me.call }
 
-    form.field(:second_field) do
-      prompt :speak => 'enter value'
-      setup { second_call_me.call }
-      failure { 
-        unless @once
-          @once = true
-          form.restart
-        end
-      }
+      field(:second_field) do
+        prompt :play => nil
+        setup { second_call_me.call }
+        failure {
+          unless @once
+            @once = true
+            form.restart
+          end
+        }
+      end
     end
     
     run_form
@@ -151,31 +169,31 @@ describe VoiceForm::Form do
     do_block_call_me = i_should_not_be_called
     second_call_me   = i_should_not_be_called
     
-    form.field(:first_field, :attempts => 1) do
-      prompt :speak => 'enter value'
-      setup   { first_call_me.call }
-      failure { form.exit }
-    end
-    
-    form.do_block { do_block_call_me.call }
+    voice_form do
+      field(:first_field, :attempts => 1) do
+        prompt :play => nil
+        setup   { first_call_me.call }
+        failure { form.exit }
+      end
+      
+      do_block { do_block_call_me.call }
 
-    form.field(:second_field) do
-      prompt :speak => 'enter value'
-      setup { second_call_me.call }
+      field(:second_field) do
+        prompt :play => nil
+        setup { second_call_me.call }
+      end
     end
     
     run_form
   end
   
   describe "current_field" do
-    before do
-      @field = nil
-    end
-    
     it "should be name of current field being run" do
-      form.field(:my_field) do
-        prompt :speak => 'enter value'
-        setup { @field = form.current_field }
+      voice_form do
+        field(:my_field) do
+          prompt :play => nil
+          setup { @field = form.current_field }
+        end
       end
       run_form
       
@@ -183,8 +201,9 @@ describe VoiceForm::Form do
     end
     
     it "should be nil in do_block" do
-      form.do_block do
-        @field = form.current_field
+      voice_form do
+        field(:my_field) { prompt :play => nil }
+        do_block { @field = form.current_field }
       end
       run_form
       
@@ -192,8 +211,8 @@ describe VoiceForm::Form do
     end
     
     it "should be nil after form is run" do
-      form.field(:my_field) do
-        prompt :speak => 'enter value'
+      voice_form do
+        field(:my_field) { prompt :play => nil }
       end
       run_form
       
@@ -201,8 +220,8 @@ describe VoiceForm::Form do
     end
   end
 
-  def new_voice_form
-    self.class.voice_form { }
+  def voice_form(&block)
+    self.class.voice_form &block
     options, block = *self.class.voice_form_options
     self.form = VoiceForm::Form.new(options, &block)
   end

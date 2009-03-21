@@ -10,7 +10,9 @@ module VoiceForm
       @options = options
       @form_stack = []
       @stack_index = 0
-      self.instance_eval(&block)
+
+      instance_eval(&block)
+      raise 'A form requires at least one field defined' if fields.empty?
     end
     
     def run(component)
