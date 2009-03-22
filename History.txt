@@ -1,3 +1,10 @@
+== 0.3.0 2009-03-22
+* Lots of refactoring for prompts. Prompts can now be a symbol for a component instance method.
+* Added prompt bargein option to set whether the caller can interrupt a prompt
+* Added Simon game example in the examples folder
+* Added as_digits helper
+* Added component start_voice_form class method to start the form without creating component instance first.
+
 == 0.2.0 2009-01-16
 * Updated to work with Adhearsion 0.8.0 release. Examples updated to match new usage.
 

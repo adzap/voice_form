@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "voice_form"
-GEM_VERSION = "0.2.0"
+GEM_VERSION = "0.3.0"
 AUTHOR = "Adam Meehan"
 EMAIL = "adam.meehan@gmail.com"
 HOMEPAGE = "http://github.com/adzap/voice_form"
