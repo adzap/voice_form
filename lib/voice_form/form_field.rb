@@ -66,9 +66,7 @@ module VoiceForm
       run_callback(:setup)
 
       result = 1.upto(@options[:attempts]) do |attempt|
-        prompt = prompt_for_attempt(attempt)
-
-        @value = get_input(prompt)
+        @value = get_input(prompt_for_attempt(attempt))
 
         unless valid_length?
           run_callback(:timeout)
@@ -90,6 +88,7 @@ module VoiceForm
       else
         run_callback(:failure)
       end
+      set_component_value @value
     end
 
     private
@@ -140,8 +139,8 @@ module VoiceForm
     end
 
     def run_callback(callback)
-      set_component_value @value
       if block = @callbacks[callback]
+        set_component_value @value
         result = @component.instance_eval(&block)
         @value = get_component_value
         result
@@ -171,7 +170,7 @@ module VoiceForm
     end
 
     def add_prompt(options)
-      method  = options.has_key?(:play) ? :play : :speak
+      method = options.has_key?(:play) ? :play : :speak
       options[:message] = options.delete(method)
       options[:method]  = method
       options[:length]  = @options[:length] || @options[:max_length]

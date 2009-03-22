@@ -298,7 +298,6 @@ describe VoiceForm::FormField do
 
   def form_field(field, options={}, &block)
     self.class.class_eval { attr_accessor field }
-    item = VoiceForm::FormField.new(field, {:attempts => 3}.merge(options), self, &block)
-    item
+    VoiceForm::FormField.new(field, {:attempts => 3}.merge(options), self, &block)
   end
 end
