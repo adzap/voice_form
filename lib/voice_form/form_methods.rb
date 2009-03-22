@@ -39,6 +39,9 @@ module VoiceForm
       self.form.run(self)
     end
 
+    def as_digits(string)
+      string.scan(/\d/).map {|v| v.to_i }
+    end
   end
 
   module FormMethods
