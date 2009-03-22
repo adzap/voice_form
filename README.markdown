@@ -27,73 +27,67 @@ At the bottom your projects startup.rb file put
 
 ## Example
 
-I use the **speak** command in this example to give better context. The speak command is for TTS 
-and is currently disabled in Adhearsion. In your own application you can just use the **play**
-command to play your sound files.
+Here is the Adhearsion example Simon game redone using voice_form:
 
-    class MyComponent
+    class SimonGame
       include VoiceForm
 
-      MIN_AGE = 18
-
-      voice_form do      
+      voice_form do
         setup do
-          # Do stuff here before the form is run
+          @number = ''
         end
-      
-        field(:age, :max_length => 3, :attempts => 3) do
-          prompt :speak => "Please enter your age", :timeout => 2
-          reprompt :speak => "Enter your age in years", :timeout => 2
-          
+
+        field(:attempt, :attempts => 1) do
+          prompt :play => :current_number, :bargein => false, :timeout => 2
+
           setup do
-            # Do stuff here before the field is run
+            @number << random_number
           end
-          
-          timeout do
-            call.speak "You did not enter anything. Try again."
-          end
-                  
+
           validate do
-            @age.to_i >= MIN_AGE
+            @attempt == @number
           end
-          
-          confirm(:accept => 1, :reject => 2, :timeout => 3, :attempts => 3) do
-            "You entered #{@age}. Press 1 to continue or 2 to try again."
-          end
-          
-          invalid do
-            call.speak "You must be at least #{MIN_AGE} to play. Try again."
-          end
-          
+
           success do
-            call.speak "You are #{@age} years old."
+            call.play 'good'
+            form.restart
           end
-          
+
           failure do
-            call.speak "You could not enter your age. Thats a bad sign. You might be too old."
-          end      
+            call.play %W[#{@number.length-1} times wrong-try-again-smarty]
+            @number = ''
+            form.restart
+          end
         end
-       
+
+      end
+
+      def random_number
+        rand(10).to_s
+      end
+
+      def current_number
+        as_digits(@number)
       end
     end
 
-In your dialplan:
+That covers most of the functionality, and hopefully it makes sense pretty much straight 
+away.
+
+To start the form, in your dialplan:
 
 For Adhearsion 0.7.999
 
     general {
-      my_component = new_my_component
-      my_component.start_voice_form(self)
+      simon_game = new_simon_game
+      simon_game.start_voice_form(self)
     }
 
-For Adhearsion 0.8.0
+For Adhearsion 0.8.x
 
     general {
-      MyComponent.new.start_voice_form(self)
+      SimonGame.start_voice_form(self)
     }
-
-That covers most of the functionality, and hopefully it makes sense pretty much straight 
-away.
 
 You don't have to start the form from the dialplan, but it makes it simple. You could start it from 
 within a component method.
@@ -207,7 +201,7 @@ including the values to accept of reject the value.
 For example, in a field called my_field:
 
     confirm(:accept => 1, :reject => 2, :attempts => 3) do
-      ['you-entered', @my_field.scan(/\d/), 'is-this-correct', 'press-1-accept-2-try-again'].flatten
+      ['you-entered', as_digits(@my_field), 'is-this-correct', 'press-1-accept-2-try-again'].flatten
     end
 
 The above will `play` the array of audio files as the prompt for confirmation. 
@@ -258,4 +252,4 @@ returned to where the form was started, be it a dialplan or another form.
 
 Adam Meehan (adam.meehan@gmail.com, [http://duckpunching.com/](http://duckpunching.com/))
 
-Also thanks to Jay Phillips for his brilliant work on Adhearsion ([http://adhearsion.com](http://adhearsion.com)).
+Also thanks to Jay Phillips et al. for the brilliant work on Adhearsion ([http://adhearsion.com](http://adhearsion.com)).
