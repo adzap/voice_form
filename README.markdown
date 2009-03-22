@@ -8,13 +8,9 @@ Released under the MIT license.
 
 ## Introduction
 
-After developing VoiceXML (VXML) apps for quite a while and then trying Adhearsion, I found I missed 
-the VXML form element flow when writing components. Given that most interactions with an IVR system
-are simply prompt, input, validate and, reprompt or go the next field. This flow has been nicely 
-distilled into the VXML form element and its child elements. The problem with VXML is that you are 
-using XML in a programmatic way, yuck! Also you are not using Ruby, so you miss out on its awesomeness.
-
-The plugin attempts to emulate some of the VXML form flow for use in your Adhearsion components.
+The plugin adds form features to Adhearsion components to quickly and semantically setup data
+input for your voice application. You define a form and form fields in which to collect data and
+setup callbacks to instruct the caller, give feedback, confirm input and validate input.
 
 
 ## Install
@@ -171,7 +167,7 @@ This is run once only for a field if defined before any prompts
 
 #### timeout
 
-This is run if no input is recevied or input is not of a valid length as defined by length or min_length
+This is run if no input is received or input is not of a valid length as defined by length or min_length
 field options.
 
 #### validate
@@ -244,7 +240,7 @@ form and proceed through each field again. The form setup will not be run again 
 
 #### form.exit
 
-To exit the form after the current field is complet just execute `form.exit`. The application will then be 
+To exit the form after the current field is complete just execute `form.exit`. The application will then be 
 returned to where the form was started, be it a dialplan or another form.
 
 
