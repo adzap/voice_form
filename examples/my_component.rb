@@ -1,19 +1,23 @@
 class MyComponent
   include VoiceForm
 
+  MAX_AGE = 110
+
   delegate :play, :speak, :to => :call
 
   voice_form do      
     field(:age, :max_length => 3, :attempts => 3) do
       prompt :speak => "Please enter your age", :timeout => 2, :repeats => 2
       reprompt :speak => "Enter your age in years", :timeout => 2
-      
-      setup { @max_age = 110 }
-              
-      validate { @age.to_i < @max_age }
-      
+
+      confirm do
+        "Are you sure you are #{@age} years old? Press 1 to confirm, or 2 to retry."
+      end
+
+      validate { @age.to_i < MAX_AGE }
+
       invalid do
-        speak "Your age must be less than #{@max_age}. Try again."
+        speak "You cannot be that old. Try again."
       end
       
       success do
@@ -30,7 +34,7 @@ class MyComponent
     end
     
     field(:postcode, :length => 4, :attempts => 5) do
-      prompt :speak => "Please enter your 4 digit post code", :timeout => 3
+      prompt :speak => "Please enter your 4 digit postcode", :timeout => 3
       
       validate { @postcode[0..0] != '0' }
       
