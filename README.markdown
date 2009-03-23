@@ -15,7 +15,7 @@ setup callbacks to instruct the caller, give feedback, confirm input and validat
 
 ## Install
 
-    sudo gem install adzap-voice_form --source=http://gems.github.com/
+    sudo gem install voice_form
     
 At the bottom your projects startup.rb file put
 
@@ -110,7 +110,7 @@ The form setup block is only run once and is not executed again, even with a `fo
 
 ### field
 
-This defines the field the with name given to collect on the form. The field method can be used
+This defines the field with the name given to collect on the form. The field method can be used
 in a `voice_form` or on its own inside a component method.
 
 The options available are:
@@ -119,7 +119,7 @@ The options available are:
 - :min_length - minimum number of digits to accept
 - :max_length - maximum number of digits to accept
 - :attempts   - number of tries to get a valid input
-- :call       - the method name for the call context if other than 'call'. Used for standalone fields not is a form.
+- :call       - the method name for the call context if other than 'call'. Used for standalone fields not in a form.
 
 All fields defined get an accessor method defined of the same name in the component class.
 This means you can access its value using the instance variable or the accessor method inside any of
@@ -248,4 +248,4 @@ returned to where the form was started, be it a dialplan or another form.
 
 Adam Meehan (adam.meehan@gmail.com, [http://duckpunching.com/](http://duckpunching.com/))
 
-Also thanks to Jay Phillips et al. for the brilliant work on Adhearsion ([http://adhearsion.com](http://adhearsion.com)).
+Also thanks to Jay Phillips et al. for the brilliant work on Adhearsion ([http://adhearsion.com](http://adhearsion.com))
