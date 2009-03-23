@@ -180,11 +180,7 @@ module VoiceForm
     end
 
     def prompt_for_attempt(attempt)
-      prompt = if attempt == 1 || @prompt_queue.size == 1 then
-        @prompt_queue.first
-      else
-        @prompt_queue[attempt-1] || @prompt_queue.last
-      end
+      prompt = @prompt_queue[attempt-1] || @prompt_queue.last
       evaluate_prompt(prompt)
     end
 
